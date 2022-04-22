@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Landing from './pages/Landing';  
 import Register from './pages/Register'; 
 import Login from './pages/Login'; 
+import Dashboard from './pages/Dashboard'; 
 
 const router = createRouter({  
     history: createWebHistory(),  
@@ -21,6 +22,11 @@ const router = createRouter({
             name: 'login',  
             path: '/login',  
             component: Login,  
+        },
+        {  
+            name: 'dashboard',  
+            path: '/dashboard',  
+            component: Dashboard,  
         },  
     ],  
 });  

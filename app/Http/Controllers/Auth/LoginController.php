@@ -20,11 +20,28 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
  
-            return redirect()->intended('dashboard');
+            return response()->json([
+                'status' => true,
+                'user' => Auth::user(),
+            ]);
         }
  
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        return response()->json([
+            'status' => false,
+        ]);
+    }
+
+    public function checkLogin(Request $request)
+    {
+        if(Auth::check()){
+            return response()->json([
+                'status' => true,
+                'user' => Auth::user(),
+            ]);
+        }
+        
+        return response()->json([
+            'status' => false,
+        ]);
     }
 }
