@@ -47,4 +47,42 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $e) 
+    { 
+        //dd($e); 
+         
+        if($e instanceof \Illuminate\Validation\ValidationException){ 
+            return response([ 
+                'status' => false, 
+                'error' => $e->errors(), 
+            ], 422); 
+        } 
+        if($e instanceof \Illuminate\Auth\Access\AuthorizationException){ 
+            return response([ 
+                'status' => false, 
+                'error' => $e->getMessage(), 
+            ], 403); 
+        } 
+        if($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException || $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException){ 
+            return response([ 
+                'status' => false, 
+                'error' => 'Resource Not Found', 
+            ], 404); 
+        } 
+        // if token is wrong 
+        if($e instanceof \Illuminate\Auth\AuthenticationException){ 
+            return response([ 
+                'status' => false, 
+                'error' => $e->getMessage(), 
+            ], 401); 
+        } 
+        // if none above exception is caught 
+        return response([ 
+            'status' => false, 
+            'error' => 'Something went wrong', 
+        ], 500); 
+         
+        parent::render($request, $e); 
+    }
 }

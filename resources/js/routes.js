@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Register from './pages/Register'; 
 import Login from './pages/Login'; 
 import Dashboard from './pages/Dashboard'; 
+import Post from './pages/Post'; 
 
 const router = createRouter({  
     history: createWebHistory(),  
@@ -27,6 +28,11 @@ const router = createRouter({
             name: 'dashboard',  
             path: '/dashboard',  
             component: Dashboard,  
+        },
+        {  
+            name: 'post',  
+            path: '/posts/:id',  
+            component: Post,  
         },  
     ],  
 });  

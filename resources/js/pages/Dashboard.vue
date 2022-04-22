@@ -42,6 +42,7 @@
                 });
             },
             logout(){
+                var self = this;
                 var data = {} 
                 let config = { 
                     headers: { 

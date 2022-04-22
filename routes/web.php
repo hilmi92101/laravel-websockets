@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+
+use App\Http\Controllers\PostController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,3 +24,7 @@ Route::get('/{vue_capture?}', function () {
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/check-login', [LoginController::class, 'checkLogin']);
 Route::post('/logout', [LogoutController::class, 'logout']);
+
+
+Route::post('/post/data', [PostController::class, 'post']);
+
