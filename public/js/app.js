@@ -19806,8 +19806,10 @@ __webpack_require__.r(__webpack_exports__);
   props: {},
   data: function data() {
     return {
+      isLoggedIn: false,
       loading: true,
-      post: null
+      post: null,
+      comment: ''
     };
   },
   created: function created() {
@@ -19819,9 +19821,36 @@ __webpack_require__.r(__webpack_exports__);
         name: routeName
       });
     },
+    createComment: function createComment() {
+      var _this = this;
+
+      if (!this.isLoggedIn) {
+        alert('You need to login first');
+        return false;
+      }
+
+      var data = {
+        comment: this.comment
+      };
+      var config = {
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+      axios.post('/post/data', data, config).then(function (response) {
+        console.log(response.data);
+        _this.isLoggedIn = response.data.post;
+        _this.post = response.data.post;
+        _this.loading = false;
+      })["catch"](function (error) {
+        if (!error.response.data.status) {//self.redirect('login');
+        }
+      });
+    },
     onload: function onload() {
+      var _this2 = this;
+
       this.loading = true;
-      var self = this;
       var data = {
         id: this.$route.params.id
       };
@@ -19832,11 +19861,11 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post('/post/data', data, config).then(function (response) {
         console.log(response.data);
-        self.post = response.data.post;
-        self.loading = false;
+        _this2.isLoggedIn = response.data.is_logged_in;
+        _this2.post = response.data.post;
+        _this2.loading = false;
       })["catch"](function (error) {
-        if (!error.response.data.status) {
-          self.redirect('login');
+        if (!error.response.data.status) {//self.redirect('login');
         }
       });
     }
@@ -20088,14 +20117,42 @@ var _hoisted_6 = {
   "class": "lead"
 };
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<h3>Comments:</h3><div style=\"margin-bottom:50px;\"><textarea class=\"form-control\" rows=\"3\" name=\"body\" placeholder=\"Leave a comment\"></textarea><button class=\"btn btn-success\" style=\"margin-top:10px;\">Save Comment</button></div><div class=\"media\" style=\"margin-top:20px;\"><div class=\"media-left\"><a href=\"#\"><img class=\"media-object\" src=\"http://placeimg.com/80/80\" alt=\"...\"></a></div><div class=\"media-body\"><h4 class=\"media-heading\">John Doe said...</h4><p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p><span style=\"color:#aaa;\">on Dec 15, 2017</span></div></div>", 3);
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, "Comments:", -1
+/* HOISTED */
+);
+
+var _hoisted_8 = {
+  style: {
+    "margin-bottom": "50px"
+  }
+};
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"media\" style=\"margin-top:20px;\"><div class=\"media-left\"><a href=\"#\"><img class=\"media-object\" src=\"http://placeimg.com/80/80\" alt=\"...\"></a></div><div class=\"media-body\"><h4 class=\"media-heading\">John Doe said...</h4><p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p><span style=\"color:#aaa;\">on Dec 15, 2017</span></div></div>", 1);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [!$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.post.title), 1
   /* TEXT */
   ), $data.post.published ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_3, "Published")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_4, "Draft")), _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.post.content), 1
   /* TEXT */
-  ), _hoisted_7])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  ), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $data.comment = $event;
+    }),
+    "class": "form-control",
+    rows: "3",
+    name: "body",
+    placeholder: "Leave a comment"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.comment]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+      return $options.createComment();
+    }, ["prevent"])),
+    "class": "btn btn-success",
+    style: {
+      "margin-top": "10px"
+    }
+  }, "Save Comment")]), _hoisted_9])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),

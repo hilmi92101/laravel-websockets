@@ -16,8 +16,8 @@
 
             <h3>Comments:</h3>
             <div style="margin-bottom:50px;">
-                <textarea class="form-control" rows="3" name="body" placeholder="Leave a comment"></textarea>
-                <button class="btn btn-success" style="margin-top:10px">Save Comment</button>
+                <textarea v-model="comment" class="form-control" rows="3" name="body" placeholder="Leave a comment"></textarea>
+                <button @click.prevent="createComment()" class="btn btn-success" style="margin-top:10px">Save Comment</button>
             </div>
 
             <div class="media" style="margin-top:20px;">
@@ -49,8 +49,10 @@
         }, 
     	data() { 
             return { 
+                isLoggedIn: false,
                 loading: true,
                 post: null,
+                comment: '',
             } 
         }, 
         created() { 
@@ -60,9 +62,37 @@
             redirect(routeName){  
                 this.$router.push({name: routeName});   
             }, 
+            createComment(){
+
+                if(!this.isLoggedIn){
+                    alert('You need to login first');
+                    return false;
+                }
+                
+                var data = {
+                    comment: this.comment,
+                } 
+                let config = { 
+                    headers: { 
+                        'Accept': 'application/json', 
+                    } 
+                } 
+                axios.post('/post/data', data, config) 
+                .then((response) => { 
+                    console.log(response.data); 
+                    this.isLoggedIn = response.data.post;
+                    this.post = response.data.post;
+                    this.loading = false;
+
+                }) 
+                .catch(function (error) { 
+                    if(!error.response.data.status){
+                        //self.redirect('login');
+                    }
+                });
+            },
             onload(){
                 this.loading = true;
-                var self = this;
                 var data = {
                     id: this.$route.params.id,
                 } 
@@ -72,14 +102,16 @@
                     } 
                 } 
                 axios.post('/post/data', data, config) 
-                .then(function (response) { 
+                .then((response) => { 
                     console.log(response.data); 
-                    self.post = response.data.post;
-                    self.loading = false;
+                    this.isLoggedIn = response.data.is_logged_in;
+                    this.post = response.data.post;
+                    this.loading = false;
+
                 }) 
                 .catch(function (error) { 
                     if(!error.response.data.status){
-                        self.redirect('login');
+                        //self.redirect('login');
                     }
                 });
             },
