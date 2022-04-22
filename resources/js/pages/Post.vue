@@ -20,19 +20,20 @@
                 <button @click.prevent="createComment()" class="btn btn-success" style="margin-top:10px">Save Comment</button>
             </div>
 
-            <div class="media" style="margin-top:20px;">
+            <div v-for="comment in post.comments" class="media mb-4" style="margin-top:20px;">
                 <div class="media-left">
                     <a href="#">
                     <img class="media-object" src="http://placeimg.com/80/80" alt="...">
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading">John Doe said...</h4>
-                    <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
+                    <h4 class="media-heading">{{ comment.user.name }} said...</h4>
+                    <p> {{ comment.body }} </p>
                     <span style="color: #aaa;">on Dec 15, 2017</span>
                 </div>
+            </div>
+            <div v-if="post.comments.length == 0">
+                <h2>No comment yet...</h2>
             </div>
 
         </div>
@@ -70,6 +71,7 @@
                 }
                 
                 var data = {
+                    postId: this.post.id,
                     comment: this.comment,
                 } 
                 let config = { 
@@ -77,18 +79,13 @@
                         'Accept': 'application/json', 
                     } 
                 } 
-                axios.post('/post/data', data, config) 
+                axios.post('/comment/store', data, config) 
                 .then((response) => { 
                     console.log(response.data); 
-                    this.isLoggedIn = response.data.post;
-                    this.post = response.data.post;
-                    this.loading = false;
-
+                    this.comment = '';
+                    this.post.comments.unshift(response.data);
                 }) 
                 .catch(function (error) { 
-                    if(!error.response.data.status){
-                        //self.redirect('login');
-                    }
                 });
             },
             onload(){

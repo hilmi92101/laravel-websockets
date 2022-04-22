@@ -22,9 +22,15 @@ class PostController extends Controller
         
         $this->checkLogin();
         
-        //$post = Post::where('id', $request->id)->first();
-        $post = Post::where('id', $request->id)->first();
-        
+        //$post = Post::where('id', $request->id)->with('user', 'comments.user')->first();
+
+        $post = Post::where('id', $request->id)
+        ->with(['comments' => function($query) {
+            $query->with('user');
+            $query->orderBy('id', 'desc');
+        }, 'user'])
+        ->first();
+
         return response()->json([
             'post' => $post,
             'status' => true,

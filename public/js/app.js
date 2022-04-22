@@ -19830,6 +19830,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       var data = {
+        postId: this.post.id,
         comment: this.comment
       };
       var config = {
@@ -19837,15 +19838,12 @@ __webpack_require__.r(__webpack_exports__);
           'Accept': 'application/json'
         }
       };
-      axios.post('/post/data', data, config).then(function (response) {
+      axios.post('/comment/store', data, config).then(function (response) {
         console.log(response.data);
-        _this.isLoggedIn = response.data.post;
-        _this.post = response.data.post;
-        _this.loading = false;
-      })["catch"](function (error) {
-        if (!error.response.data.status) {//self.redirect('login');
-        }
-      });
+        _this.comment = '';
+
+        _this.post.comments.unshift(response.data);
+      })["catch"](function (error) {});
     },
     onload: function onload() {
       var _this2 = this;
@@ -20126,9 +20124,49 @@ var _hoisted_8 = {
     "margin-bottom": "50px"
   }
 };
+var _hoisted_9 = {
+  "class": "media mb-4",
+  style: {
+    "margin-top": "20px"
+  }
+};
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"media\" style=\"margin-top:20px;\"><div class=\"media-left\"><a href=\"#\"><img class=\"media-object\" src=\"http://placeimg.com/80/80\" alt=\"...\"></a></div><div class=\"media-body\"><h4 class=\"media-heading\">John Doe said...</h4><p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p><span style=\"color:#aaa;\">on Dec 15, 2017</span></div></div>", 1);
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "media-left"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  href: "#"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  "class": "media-object",
+  src: "http://placeimg.com/80/80",
+  alt: "..."
+})])], -1
+/* HOISTED */
+);
 
+var _hoisted_11 = {
+  "class": "media-body"
+};
+var _hoisted_12 = {
+  "class": "media-heading"
+};
+
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  style: {
+    "color": "#aaa"
+  }
+}, "on Dec 15, 2017", -1
+/* HOISTED */
+);
+
+var _hoisted_14 = {
+  key: 2
+};
+
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "No comment yet...", -1
+/* HOISTED */
+);
+
+var _hoisted_16 = [_hoisted_15];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [!$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.post.title), 1
   /* TEXT */
@@ -20152,7 +20190,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     style: {
       "margin-top": "10px"
     }
-  }, "Save Comment")]), _hoisted_9])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  }, "Save Comment")]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.post.comments, function (comment) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(comment.user.name) + " said...", 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(comment.body), 1
+    /* TEXT */
+    ), _hoisted_13])]);
+  }), 256
+  /* UNKEYED_FRAGMENT */
+  )), $data.post.comments.length == 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, _hoisted_16)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),
