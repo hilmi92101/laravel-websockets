@@ -19819,7 +19819,8 @@ __webpack_require__.r(__webpack_exports__);
     listen: function listen() {
       var _this = this;
 
-      window.Echo.channel('post.' + this.post.id).listen('NewComment', function (comment) {
+      window.Echo //.channel('post.' + this.post.id) 
+      ["private"]('post.' + this.post.id).listen('NewComment', function (comment) {
         _this.post.comments.unshift(comment);
       });
     },

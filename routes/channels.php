@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('post.{id}', function ($user, $id) {
+    return true; // only logged in user can received broadcast
+    //return $user->id == \App\Models\Post::find($id)->user_id; // if want only the author/commentor to get the broadcast
+});

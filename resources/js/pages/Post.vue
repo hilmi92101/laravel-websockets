@@ -62,7 +62,8 @@
     	methods: { 
             listen(){ 
                 window.Echo 
-                .channel('post.' + this.post.id) 
+                //.channel('post.' + this.post.id) 
+                .private('post.' + this.post.id) 
                 .listen('NewComment', (comment) => { 
                     this.post.comments.unshift(comment);
                 }); 
