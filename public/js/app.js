@@ -19816,13 +19816,15 @@ __webpack_require__.r(__webpack_exports__);
     this.onload();
   },
   methods: {
-    redirect: function redirect(routeName) {
-      this.$router.push({
-        name: routeName
+    listen: function listen() {
+      var _this = this;
+
+      window.Echo.channel('post.' + this.post.id).listen('NewComment', function (comment) {
+        _this.post.comments.unshift(comment);
       });
     },
     createComment: function createComment() {
-      var _this = this;
+      var _this2 = this;
 
       if (!this.isLoggedIn) {
         alert('You need to login first');
@@ -19839,14 +19841,12 @@ __webpack_require__.r(__webpack_exports__);
         }
       };
       axios.post('/comment/store', data, config).then(function (response) {
-        console.log(response.data);
-        _this.comment = '';
-
-        _this.post.comments.unshift(response.data);
+        //console.log(response.data); 
+        _this2.comment = ''; //this.post.comments.unshift(response.data);
       })["catch"](function (error) {});
     },
     onload: function onload() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.loading = true;
       var data = {
@@ -19859,12 +19859,19 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post('/post/data', data, config).then(function (response) {
         console.log(response.data);
-        _this2.isLoggedIn = response.data.is_logged_in;
-        _this2.post = response.data.post;
-        _this2.loading = false;
+        _this3.isLoggedIn = response.data.is_logged_in;
+        _this3.post = response.data.post;
+        _this3.loading = false;
+
+        _this3.listen();
       })["catch"](function (error) {
         if (!error.response.data.status) {//self.redirect('login');
         }
+      });
+    },
+    redirect: function redirect(routeName) {
+      this.$router.push({
+        name: routeName
       });
     }
   },

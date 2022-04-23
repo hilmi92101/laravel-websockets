@@ -60,9 +60,13 @@
             this.onload();
         }, 
     	methods: { 
-            redirect(routeName){  
-                this.$router.push({name: routeName});   
-            }, 
+            listen(){ 
+                window.Echo 
+                .channel('post.' + this.post.id) 
+                .listen('NewComment', (comment) => { 
+                    this.post.comments.unshift(comment);
+                }); 
+            },
             createComment(){
 
                 if(!this.isLoggedIn){
@@ -81,9 +85,9 @@
                 } 
                 axios.post('/comment/store', data, config) 
                 .then((response) => { 
-                    console.log(response.data); 
+                    //console.log(response.data); 
                     this.comment = '';
-                    this.post.comments.unshift(response.data);
+                    //this.post.comments.unshift(response.data);
                 }) 
                 .catch(function (error) { 
                 });
@@ -104,6 +108,7 @@
                     this.isLoggedIn = response.data.is_logged_in;
                     this.post = response.data.post;
                     this.loading = false;
+                    this.listen();
 
                 }) 
                 .catch(function (error) { 
@@ -112,6 +117,10 @@
                     }
                 });
             },
+            redirect(routeName){  
+                this.$router.push({name: routeName});   
+            }, 
+            
         }, 
         computed: { 
         }, 

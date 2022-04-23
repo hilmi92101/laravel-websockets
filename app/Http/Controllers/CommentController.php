@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Events\NewComment; 
+
 
 class CommentController extends Controller
 {
@@ -24,6 +26,9 @@ class CommentController extends Controller
         ]);
 
         $comment = Comment::where('id', $comment->id)->with('user')->first();
+        
+        event(new NewComment($comment));
+        
         return $comment->toJson();
     }
 }
