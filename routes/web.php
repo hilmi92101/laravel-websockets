@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LogoutController;
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\VisitorController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,4 +30,5 @@ Route::post('/logout', [LogoutController::class, 'logout']);
 
 Route::post('/post/data', [PostController::class, 'post']);
 Route::post('/comment/store', [CommentController::class, 'store']);
+Route::post('/visitor/onload', [VisitorController::class, 'onload']);
 

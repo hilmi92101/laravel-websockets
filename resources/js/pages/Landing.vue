@@ -5,6 +5,8 @@
     </div> 
 </template> 
 <script> 
+    import { mapGetters } from 'vuex';
+
     export default { 
         components: { 
         }, 
@@ -15,13 +17,20 @@
             } 
         }, 
         created() { 
+            console.log(this.total);
+            this.$store.dispatch('Visitor/createVisitor');
         }, 
     	methods: { 
             redirect(routeName){  
                 this.$router.push({name: routeName});   
             }, 
+
+
         }, 
         computed: { 
+            ...mapGetters('Visitor', [ 
+                'total', 
+            ]),
         }, 
         filters: { 
         } 
