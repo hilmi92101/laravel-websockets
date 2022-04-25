@@ -45,7 +45,8 @@ const actions = {
     dbCall: (context, payload) => { 
 
         var data = { 
-            visitor: context.state.visitor, 
+            name: context.state.visitor.name, 
+            password: context.state.visitor.password, 
         }  
         let config = {  
             headers: {  
@@ -55,10 +56,19 @@ const actions = {
         axios.post('/visitor/onload', data, config)  
         .then((response) => {  
             console.log(response.data);  
+            context.dispatch('Visitor/listenVisitorTotal', {}, { root: true }); 
         })  
         .catch(function (error) {  
         });
     },
+    listenVisitorTotal: (context, payload) => { 
+        window.Echo
+            .join('visitors-counter')
+            .here(users => context.state.total = users.length)
+            .joining(user => context.state.total++)
+            .leaving(user => context.state.total--);
+    },
+
 }; 
 const mutations = { 
     setName: (state, payload) => { 

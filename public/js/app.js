@@ -20030,7 +20030,9 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", null, "Total Visitors Online: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.total), 1
+  /* TEXT */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.redirect('register');
     }, ["prevent"])),
@@ -20478,7 +20480,8 @@ var actions = {
   },
   dbCall: function dbCall(context, payload) {
     var data = {
-      visitor: context.state.visitor
+      name: context.state.visitor.name,
+      password: context.state.visitor.password
     };
     var config = {
       headers: {
@@ -20487,7 +20490,19 @@ var actions = {
     };
     axios.post('/visitor/onload', data, config).then(function (response) {
       console.log(response.data);
+      context.dispatch('Visitor/listenVisitorTotal', {}, {
+        root: true
+      });
     })["catch"](function (error) {});
+  },
+  listenVisitorTotal: function listenVisitorTotal(context, payload) {
+    window.Echo.join('visitors-counter').here(function (users) {
+      return context.state.total = users.length;
+    }).joining(function (user) {
+      return context.state.total++;
+    }).leaving(function (user) {
+      return context.state.total--;
+    });
   }
 };
 var mutations = {

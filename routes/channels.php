@@ -28,3 +28,10 @@ Broadcast::channel('users-counter', function ($user) {
         'name' => $user->name,
     ];
 });
+
+Broadcast::channel('visitors-counter', function ($user) { 
+    return [ 
+        'id' => $user->id, 
+        'name' => $user->name, 
+    ]; 
+}, ['guards' => ['visitor']]);
