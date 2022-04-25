@@ -19659,10 +19659,14 @@ __webpack_require__.r(__webpack_exports__);
   components: {},
   props: {},
   data: function data() {
-    return {};
+    return {
+      user: [],
+      count: 0
+    };
   },
   created: function created() {
     this.onload();
+    this.listen();
   },
   methods: {
     redirect: function redirect(routeName) {
@@ -19671,7 +19675,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     onload: function onload() {
-      var self = this;
+      var _this = this;
+
       var data = {};
       var config = {
         headers: {
@@ -19682,9 +19687,22 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response.data);
 
         if (!response.data.status) {
-          self.redirect('login');
+          _this.redirect('login');
+        } else {
+          _this.user = response.data.user;
         }
       })["catch"](function (error) {});
+    },
+    listen: function listen() {
+      var _this2 = this;
+
+      window.Echo.join('users-counter').here(function (users) {
+        return _this2.count = users.length;
+      }).joining(function (user) {
+        return _this2.count++;
+      }).leaving(function (user) {
+        return _this2.count--;
+      });
     },
     logout: function logout() {
       var self = this;
@@ -19955,8 +19973,20 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
+var _hoisted_3 = {
+  key: 0
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("br", null, null, -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, $data.user.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h4", _hoisted_3, "Welcome, " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.user.name), 1
+  /* TEXT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", null, "Total Users Online: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.count), 1
+  /* TEXT */
+  ), _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.logout();
     }, ["prevent"])),

@@ -21,3 +21,10 @@ Broadcast::channel('post.{id}', function ($user, $id) {
     return true; // only logged in user can received broadcast
     //return $user->id == \App\Models\Post::find($id)->user_id; // if want only the author/commentor to get the broadcast
 });
+
+Broadcast::channel('users-counter', function ($user) {
+    return [
+        'id' => $user->id,
+        'name' => $user->name,
+    ];
+});
