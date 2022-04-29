@@ -20343,6 +20343,33 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   cluster: "ap1",
   forceTLS: true
 });
+window.Echo2 = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
+  broadcaster: "pusher",
+  key: "98706fcf03bcc66a30a6",
+  cluster: "ap1",
+  forceTLS: true,
+  authorizer: function authorizer(channel, options) {
+    return {
+      authorize: function authorize(socketId, callback) {
+        var data = {
+          socket_id: socketId,
+          channel_name: channel.name
+        };
+        var config = {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('visitor_token')
+          }
+        };
+        axios.post('/api/broadcasting/auth', data, config).then(function (response) {
+          callback(false, response.data);
+        })["catch"](function (error) {
+          callback(true, error);
+        });
+      }
+    };
+  }
+});
 
 /***/ }),
 
@@ -20435,10 +20462,9 @@ var state = {
   total: 0,
   visitor: {
     name: '',
-    password: '1q2w3e4r'
-  },
-  visitorLSKey: 'visitor_name' // Local Storage key
-
+    password: '1q2w3e4r',
+    token: ''
+  }
 };
 var getters = {
   total: function total(state) {
@@ -20447,38 +20473,26 @@ var getters = {
 };
 var actions = {
   createVisitor: function createVisitor(context, payload) {
-    context.dispatch('Visitor/checkExist', {}, {
+    context.dispatch('Visitor/checkExistOrCreate', {}, {
       root: true
     });
-    context.dispatch('Visitor/createName', {}, {
-      root: true
-    });
-    context.dispatch('Visitor/saveVisitorToLS', {}, {
-      root: true
-    });
-    context.dispatch('Visitor/dbCall', {}, {
+    context.dispatch('Visitor/createToken', {}, {
       root: true
     });
   },
-  checkExist: function checkExist(context, payload) {
-    if (localStorage.getItem(context.state.visitorLSKey) !== null) {
-      context.commit('setName', localStorage.getItem(context.state.visitorLSKey));
-    }
-  },
-  createName: function createName(context, payload) {
-    if (context.state.visitor.name === '') {
+  checkExistOrCreate: function checkExistOrCreate(context, payload) {
+    if (localStorage.getItem('visitor_name') !== null) {
+      context.commit('setName', localStorage.getItem('visitor_name'));
+    } else {
       var no_1 = Math.floor(Math.random() * 100000) + 1;
       var no_2 = Math.floor(Math.random() * 100000) + 1;
       var name = 'visitor_' + no_1 + '_' + no_2;
-      context.commit('setName', name);
+      context.commit('setName', name); // Store at Local Storage
+
+      localStorage.setItem('visitor_name', context.state.visitor.name);
     }
   },
-  saveVisitorToLS: function saveVisitorToLS(context, payload) {
-    if (context.state.visitor.name !== '') {
-      localStorage.setItem(context.state.visitorLSKey, context.state.visitor.name);
-    }
-  },
-  dbCall: function dbCall(context, payload) {
+  createToken: function createToken(context, payload) {
     var data = {
       name: context.state.visitor.name,
       password: context.state.visitor.password
@@ -20488,15 +20502,19 @@ var actions = {
         'Accept': 'application/json'
       }
     };
-    axios.post('/visitor/onload', data, config).then(function (response) {
+    axios.post('/api/visitor/login', data, config).then(function (response) {
       console.log(response.data);
+      var token = response.data.visitor_token;
+      context.commit('setToken', token);
+      localStorage.setItem('visitor_token', token);
       context.dispatch('Visitor/listenVisitorTotal', {}, {
         root: true
       });
     })["catch"](function (error) {});
   },
+  createEcho: function createEcho(context, payload) {},
   listenVisitorTotal: function listenVisitorTotal(context, payload) {
-    window.Echo.join('visitors-counter').here(function (users) {
+    window.Echo2.join('visitors-counter').here(function (users) {
       return context.state.total = users.length;
     }).joining(function (user) {
       return context.state.total++;
@@ -20508,6 +20526,9 @@ var actions = {
 var mutations = {
   setName: function setName(state, payload) {
     state.visitor.name = payload;
+  },
+  setToken: function setToken(state, payload) {
+    state.visitor.token = payload;
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({

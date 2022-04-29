@@ -30,5 +30,5 @@ Route::post('/logout', [LogoutController::class, 'logout']);
 
 Route::post('/post/data', [PostController::class, 'post']);
 Route::post('/comment/store', [CommentController::class, 'store']);
-Route::post('/visitor/onload', [VisitorController::class, 'onload']);
+//Route::post('/visitor/onload', [VisitorController::class, 'onload']);
 

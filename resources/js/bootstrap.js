@@ -26,3 +26,35 @@ window.Echo = new Echo({
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
     forceTLS: true
 });
+
+window.Echo2 = new Echo({
+    broadcaster: "pusher",
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    forceTLS: true,
+    authorizer: (channel, options) => {
+        return {
+            authorize: (socketId, callback) => {
+                var data = {
+                    socket_id: socketId,
+                    channel_name: channel.name
+                }
+                let config = {  
+                    headers: {  
+                        'Accept': 'application/json',  
+                        'Authorization': 'Bearer ' + localStorage.getItem('visitor_token'),  
+                    }  
+                }
+
+                axios.post('/api/broadcasting/auth', data, config)
+                .then(response => {
+                    callback(false, response.data);
+                })
+                .catch(error => {
+                    callback(true, error);
+                });
+            }
+        };
+    },
+});
+

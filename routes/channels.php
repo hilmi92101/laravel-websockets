@@ -35,3 +35,4 @@ Broadcast::channel('visitors-counter', function ($user) {
         'name' => $user->name, 
     ]; 
 }, ['guards' => ['visitor']]);
+

@@ -3,8 +3,8 @@ const state = {
     visitor: {
         name: '',
         password: '1q2w3e4r',
+        token: '',
     },
-    visitorLSKey: 'visitor_name', // Local Storage key
 
 
 }; 
@@ -15,35 +15,26 @@ const getters = {
 }; 
 const actions = { 
     createVisitor: (context, payload) => { 
-        context.dispatch('Visitor/checkExist', {}, { root: true }); 
-        context.dispatch('Visitor/createName', {}, { root: true }); 
-        context.dispatch('Visitor/saveVisitorToLS', {}, { root: true }); 
-        context.dispatch('Visitor/dbCall', {}, { root: true }); 
-    },
-    checkExist: (context, payload) => { 
-        if(localStorage.getItem(context.state.visitorLSKey) !== null) {
-            context.commit('setName', localStorage.getItem(context.state.visitorLSKey));
-        }
-    },
-    createName: (context, payload) => { 
+        context.dispatch('Visitor/checkExistOrCreate', {}, { root: true }); 
+        context.dispatch('Visitor/createToken', {}, { root: true });
 
-        if(context.state.visitor.name === ''){
+    },
+
+    checkExistOrCreate: (context, payload) => { 
+        if(localStorage.getItem('visitor_name') !== null) {
+            context.commit('setName', localStorage.getItem('visitor_name'));
+        } else {
             var no_1 = Math.floor(Math.random() * 100000) + 1;
             var no_2 = Math.floor(Math.random() * 100000) + 1;
             var name = 'visitor_' + no_1 + '_' + no_2;
-
             context.commit('setName', name);
-        }
-        
-    },
-    saveVisitorToLS: (context, payload) => { 
-        if(context.state.visitor.name !== ''){
-            localStorage.setItem(context.state.visitorLSKey, context.state.visitor.name);
-        }
-        
-    },
-    dbCall: (context, payload) => { 
 
+            // Store at Local Storage
+            localStorage.setItem('visitor_name', context.state.visitor.name);
+        }
+    },
+    createToken: (context, payload) => { 
+        
         var data = { 
             name: context.state.visitor.name, 
             password: context.state.visitor.password, 
@@ -53,16 +44,26 @@ const actions = {
                 'Accept': 'application/json',  
             }  
         }  
-        axios.post('/visitor/onload', data, config)  
+        axios.post('/api/visitor/login', data, config)  
         .then((response) => {  
-            console.log(response.data);  
+            console.log(response.data);
+            var token = response.data.visitor_token;
+            context.commit('setToken', token);
+            localStorage.setItem('visitor_token', token);
+
+
             context.dispatch('Visitor/listenVisitorTotal', {}, { root: true }); 
         })  
         .catch(function (error) {  
         });
     },
+
+    createEcho: (context, payload) => { 
+        
+    },
+
     listenVisitorTotal: (context, payload) => { 
-        window.Echo
+        window.Echo2
             .join('visitors-counter')
             .here(users => context.state.total = users.length)
             .joining(user => context.state.total++)
@@ -73,6 +74,9 @@ const actions = {
 const mutations = { 
     setName: (state, payload) => { 
         state.visitor.name = payload; 
+    },
+    setToken: (state, payload) => { 
+        state.visitor.token = payload; 
     },
     
 
