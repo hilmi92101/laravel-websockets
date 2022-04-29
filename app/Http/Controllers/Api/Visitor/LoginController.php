@@ -14,27 +14,61 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        
-        $visitor = Visitor::where('name', $request->name)->first();
-        if(is_null($visitor)){
-            $visitor = Visitor::create([
-                'name' => $request->name,
-                'password' => Hash::make('1q2w3e4r'),
-            ]);
+
+        if(auth('sanctum')->check()){
+            $status = false;
+            $token = "lalala";
+
+        }  else {
+
+            
+            $visitor = Visitor::where('name', $request->name)->first();
+            if(is_null($visitor)){
+                $visitor = Visitor::create([
+                    'name' => $request->name,
+                    'password' => Hash::make('1q2w3e4r'),
+                ]);
+            }
+
+            $visitor->tokens()->delete();
+
+            if (! $visitor || ! Hash::check($request->password, $visitor->password)) {
+                throw ValidationException::withMessages([
+                    'name' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            $token = $visitor->createToken("authVisitor")->plainTextToken;
+            $status = true;
         }
 
-        $visitor->tokens()->delete();
-
-        if (! $visitor || ! Hash::check($request->password, $visitor->password)) {
-            throw ValidationException::withMessages([
-                'name' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-     
         return response()->json([ 
             'status' => true, 
-            'visitor_token' => $visitor->createToken("authVisitor")->plainTextToken, 
+            'visitor_token' => $token, 
         ]);
+
+        
+        
+        // $visitor = Visitor::where('name', $request->name)->first();
+        // if(is_null($visitor)){
+        //     $visitor = Visitor::create([
+        //         'name' => $request->name,
+        //         'password' => Hash::make('1q2w3e4r'),
+        //     ]);
+        // }
+
+        // $visitor->tokens()->delete();
+
+        // if (! $visitor || ! Hash::check($request->password, $visitor->password)) {
+        //     throw ValidationException::withMessages([
+        //         'name' => ['The provided credentials are incorrect.'],
+        //     ]);
+        // }
+     
+        // return response()->json([ 
+        //     'status' => true, 
+        //     'visitor_token' => $visitor->createToken("authVisitor")->plainTextToken, 
+        // ]);
     }
 
     

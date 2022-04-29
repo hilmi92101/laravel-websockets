@@ -25,12 +25,6 @@ Route::prefix('visitor')->group(function() {
     
 });
 
-Route::prefix('visitor')->middleware('auth:sanctum')->group(function() {
-});
-
-
-
-
 Route::get('/posts/{post}/comments', [CommentController::class, 'index']);
 
 
@@ -45,6 +39,6 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware('auth:sanctum')->post('/user', function (Request $request) {
+    return $request->user()->except(['password']);
+});

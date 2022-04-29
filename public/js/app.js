@@ -20473,14 +20473,14 @@ var getters = {
 };
 var actions = {
   createVisitor: function createVisitor(context, payload) {
-    context.dispatch('Visitor/checkExistOrCreate', {}, {
+    context.dispatch('Visitor/checkNameExistOrCreate', {}, {
       root: true
     });
-    context.dispatch('Visitor/createToken', {}, {
+    context.dispatch('Visitor/checkTokenExistOrCreate', {}, {
       root: true
     });
   },
-  checkExistOrCreate: function checkExistOrCreate(context, payload) {
+  checkNameExistOrCreate: function checkNameExistOrCreate(context, payload) {
     if (localStorage.getItem('visitor_name') !== null) {
       context.commit('setName', localStorage.getItem('visitor_name'));
     } else {
@@ -20491,6 +20491,41 @@ var actions = {
 
       localStorage.setItem('visitor_name', context.state.visitor.name);
     }
+  },
+  checkTokenExistOrCreate: function checkTokenExistOrCreate(context, payload) {
+    if (localStorage.getItem('visitor_token') !== null) {
+      var token = localStorage.getItem('visitor_token');
+      context.dispatch('Visitor/checkTokenValiditiy', token, {
+        root: true
+      });
+    } else {
+      context.dispatch('Visitor/createToken', {}, {
+        root: true
+      });
+    }
+  },
+  checkTokenValiditiy: function checkTokenValiditiy(context, payload) {
+    var data = {};
+    var config = {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + payload
+      }
+    };
+    console.log(config);
+    axios.post('/api/user', data, config).then(function (response) {
+      //console.log(response.data);
+      context.dispatch('Visitor/listenVisitorTotal', {}, {
+        root: true
+      });
+    })["catch"](function (error) {
+      //console.log(error.response)  
+      if (error.response.status === 401) {
+        context.dispatch('Visitor/createToken', {}, {
+          root: true
+        });
+      }
+    });
   },
   createToken: function createToken(context, payload) {
     var data = {
@@ -20505,14 +20540,15 @@ var actions = {
     axios.post('/api/visitor/login', data, config).then(function (response) {
       console.log(response.data);
       var token = response.data.visitor_token;
-      context.commit('setToken', token);
-      localStorage.setItem('visitor_token', token);
+      context.commit('setToken', token); // Store at Local Storage
+
+      localStorage.setItem('visitor_token', token); // Start listening
+
       context.dispatch('Visitor/listenVisitorTotal', {}, {
         root: true
       });
     })["catch"](function (error) {});
   },
-  createEcho: function createEcho(context, payload) {},
   listenVisitorTotal: function listenVisitorTotal(context, payload) {
     window.Echo2.join('visitors-counter').here(function (users) {
       return context.state.total = users.length;

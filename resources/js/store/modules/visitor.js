@@ -15,12 +15,11 @@ const getters = {
 }; 
 const actions = { 
     createVisitor: (context, payload) => { 
-        context.dispatch('Visitor/checkExistOrCreate', {}, { root: true }); 
-        context.dispatch('Visitor/createToken', {}, { root: true });
-
+        context.dispatch('Visitor/checkNameExistOrCreate', {}, { root: true }); 
+        context.dispatch('Visitor/checkTokenExistOrCreate', {}, { root: true }); 
     },
 
-    checkExistOrCreate: (context, payload) => { 
+    checkNameExistOrCreate: (context, payload) => { 
         if(localStorage.getItem('visitor_name') !== null) {
             context.commit('setName', localStorage.getItem('visitor_name'));
         } else {
@@ -32,6 +31,36 @@ const actions = {
             // Store at Local Storage
             localStorage.setItem('visitor_name', context.state.visitor.name);
         }
+    },
+    checkTokenExistOrCreate: (context, payload) => { 
+        if(localStorage.getItem('visitor_token') !== null) {
+            var token = localStorage.getItem('visitor_token');
+            context.dispatch('Visitor/checkTokenValiditiy', token, { root: true });
+
+        } else {
+            context.dispatch('Visitor/createToken', {}, { root: true });
+        }
+    },
+    checkTokenValiditiy: (context, payload) => {
+        var data = {}  
+        let config = {  
+            headers: {  
+                'Accept': 'application/json',  
+                'Authorization': 'Bearer ' + payload,  
+            }  
+        }  
+        console.log(config)
+        axios.post('/api/user', data, config)  
+        .then((response) => {  
+            //console.log(response.data);
+            context.dispatch('Visitor/listenVisitorTotal', {}, { root: true });
+        })  
+        .catch((error) => {
+            //console.log(error.response)  
+            if(error.response.status === 401){
+                context.dispatch('Visitor/createToken', {}, { root: true });
+            }
+        });
     },
     createToken: (context, payload) => { 
         
@@ -49,17 +78,15 @@ const actions = {
             console.log(response.data);
             var token = response.data.visitor_token;
             context.commit('setToken', token);
+
+            // Store at Local Storage
             localStorage.setItem('visitor_token', token);
 
-
+            // Start listening
             context.dispatch('Visitor/listenVisitorTotal', {}, { root: true }); 
         })  
         .catch(function (error) {  
         });
-    },
-
-    createEcho: (context, payload) => { 
-        
     },
 
     listenVisitorTotal: (context, payload) => { 
@@ -78,8 +105,6 @@ const mutations = {
     setToken: (state, payload) => { 
         state.visitor.token = payload; 
     },
-    
-
     
 }; 
 
