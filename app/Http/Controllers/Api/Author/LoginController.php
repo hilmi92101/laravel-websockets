@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Visitor;
+namespace App\Http\Controllers\Api\Author;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,35 +8,35 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Visitor;
+use App\Models\Author;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
 
-        $visitor = Visitor::where('name', $request->name)->first();
-        if(is_null($visitor)){
-            $visitor = Visitor::create([
-                'name' => $request->name,
+        $author = Author::where('username', $request->name)->first();
+        if(is_null($author)){
+            $author = Author::create([
+                'username' => $request->name,
                 'password' => Hash::make('1q2w3e4r'),
             ]);
         }
 
-        $visitor->tokens()->delete();
+        $author->tokens()->delete();
 
-        if (! $visitor || ! Hash::check($request->password, $visitor->password)) {
+        if (! $author || ! Hash::check($request->password, $author->password)) {
             throw ValidationException::withMessages([
-                'name' => ['The provided credentials are incorrect.'],
+                'username' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $token = $visitor->createToken("authVisitor")->plainTextToken;
+        $token = $author->createToken("authAuthor")->plainTextToken;
         $status = true;
 
         return response()->json([ 
             'status' => true, 
-            'visitor_token' => $token, 
+            'author_token' => $token, 
         ]);
     }
 

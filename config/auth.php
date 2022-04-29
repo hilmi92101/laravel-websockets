@@ -45,6 +45,11 @@ return [
             'driver' => 'sanctum',
             'provider' => 'visitors',
         ],
+
+        'author' => [
+            'driver' => 'sanctum',
+            'provider' => 'authors',
+        ],
     ],
 
     /*
@@ -74,6 +79,13 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Visitor::class,
         ],
+
+        'authors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Author::class,
+        ],
+
+        
 
         // 'users' => [
         //     'driver' => 'database',

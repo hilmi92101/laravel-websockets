@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 
 use App\Http\Controllers\Api\Visitor\LoginController as VisitorLoginController;
+use App\Http\Controllers\Api\Author\LoginController as AuthorLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,11 @@ Route::prefix('visitor')->group(function() {
     
 });
 
+Route::prefix('author')->group(function() {
+    Route::post('/login', [AuthorLoginController::class, 'login']);
+    
+});
+
 Route::get('/posts/{post}/comments', [CommentController::class, 'index']);
 
 
@@ -40,5 +46,5 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 
 Route::middleware('auth:sanctum')->post('/user', function (Request $request) {
-    return $request->user()->except(['password']);
+    return $request->user();
 });

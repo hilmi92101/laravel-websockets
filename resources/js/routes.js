@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Login from './pages/Login'; 
 import Dashboard from './pages/Dashboard'; 
 import Post from './pages/Post'; 
+import Author from './pages/Author'; 
 
 const router = createRouter({  
     history: createWebHistory(),  
@@ -33,6 +34,11 @@ const router = createRouter({
             name: 'post',  
             path: '/posts/:id',  
             component: Post,  
+        },
+        {  
+            name: 'author',  
+            path: '/author',  
+            component: Author,  
         },  
     ],  
 });  

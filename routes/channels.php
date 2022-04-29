@@ -36,3 +36,12 @@ Broadcast::channel('visitors-counter', function ($user) {
     ]; 
 }, ['guards' => ['visitor']]);
 
+Broadcast::channel('authors-counter', function ($user) { 
+    return [ 
+        'id' => $user->id, 
+        'name' => $user->name, 
+    ]; 
+}, ['guards' => ['author']]);
+
+
+
